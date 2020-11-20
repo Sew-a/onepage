@@ -1,0 +1,29 @@
+@import "./components/styles/header";
+@import "./components/styles/api";
+@import "./components/styles/modal";
+
+
+*{
+  margin: 0;
+  padding: 0;
+}
+
+body{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.main-app{
+  position: relative;
+  width:100%;
+  height: auto;
+  margin: 90px auto;
+}
+
+li{
+  list-style: none;
+}
+a{
+  text-decoration: none;
+}
