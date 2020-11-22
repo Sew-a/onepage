@@ -52,3 +52,45 @@ button {
   background: #247BA0;
   color: #fff;
 }
+
+.modal_styles{
+  position: fixed;
+  width:400px;
+  height:auto;
+
+  border-radius: 2px;
+  top:50%;
+  left: 50%;
+  transform:translate(-50%,-50%);
+  background: #f2f2f2;
+  padding: 25px;
+  zIndex:100;
+
+  .mmm{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    input{
+      margin: 5px;
+      padding: 4px 13px;
+      border-radius: 12px;
+      outline: none;
+    }
+    button{
+      margin: 2px;
+      width:180px;
+      border-radius: 6px;
+    }
+  }
+
+  .close_btn{
+    position: absolute;
+    right:5px;
+    top:5px;
+    cursor: pointer;
+    color:#151b31;
+    font-family: "Arial Narrow";
+  }
+}
