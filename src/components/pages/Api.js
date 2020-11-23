@@ -1,12 +1,6 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
-
-import Modal from "./modal/Modal"
-import useModal from "./modal/UseModal";
-
 import NewModal from "./modal/NewModal";
-
-
 
  const Api = () => {
     const [all, getAll] = useState([]);
@@ -14,9 +8,7 @@ import NewModal from "./modal/NewModal";
     const [pass, setPass] = useState("");
     const [getID, setGetID] = useState("");
 
-    const {isShowing, toggle} = useModal();
     const [showDataTarg, setShowDataTarg] = useState("");
-
     const [isOpen, setIsOpen] = useState(false);
 
 
@@ -45,7 +37,7 @@ import NewModal from "./modal/NewModal";
                  // console.log(tor);
                  setShowDataTarg(tor);
              });
-         {toggle()}
+         setIsOpen(true);
      }
 
     //  --------------------  DELETE
@@ -74,7 +66,7 @@ import NewModal from "./modal/NewModal";
 
     // -------------------------------- PUT
 
-     const ClickChangeUser = async () => {
+     const clickChangeUser = async () => {
          await axios.put(`http://localhost:3001/users/${getID}`, {
              name: fName.length ? fName : "Gaga",
              password: pass.length ? pass : "45454545",
@@ -91,7 +83,6 @@ import NewModal from "./modal/NewModal";
         setIsOpen(true);
         setGetID(id);
     }
-
 
 
 // DOM
@@ -119,19 +110,17 @@ return(
                  ))}
             </tbody>
         </table>
-
+            <button onClick={()=> {setIsOpen(true)}} className="add_btn">ADD</button>
         {/*    MODAL  */}
 
-            <Modal isShowing={isShowing}  hide={toggle}  useName={showDataTarg} />
-
-            <NewModal open={isOpen} onClose={() => setIsOpen(false)}>
+            <NewModal open={isOpen} useName={showDataTarg} onClose={() => setIsOpen(false)}>
                 <input placeholder="Name" value={fName} onChange={(e) => setfName(e.target.value)} />
                 <input placeholder="Password" value={pass} onChange={(e) => setPass(e.target.value)} />
-                <button onClick={addUser} >Create User</button>
-                <button onClick={ClickChangeUser} >Change User</button>
+                <div className="mod-buttons">
+                    <button onClick={addUser} >Create User</button>
+                    <button onClick={clickChangeUser} >Change User</button>
+                </div>
             </NewModal>
-            <button onClick={()=> {setIsOpen(true)}}>ADD</button>
-
         </div>
   );
 };
