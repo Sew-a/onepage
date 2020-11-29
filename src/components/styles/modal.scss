@@ -1,4 +1,9 @@
 
+h3.errorMessage{
+  color:#fff;
+  font-weight: lighter;
+}
+
 .modal{
   position: fixed;
   max-width:500px;
@@ -9,19 +14,13 @@
   left: 50%;
   transform:translate(-50%,-50%);
   background: #fff;
-  padding: 4rem;
-  zIndex:100;
+  padding: 2rem;
+  z-index:100;
 
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
-
-  .user_info{
-     width:80%;
-     height: auto;
-     padding-bottom: 20px;
-  }
 
     input{
       margin:15px 0;
@@ -34,14 +33,15 @@
     }
 
     .image{
+      position: relative;
       width:120px;
-      height:160px;
+      height:120px;
       img{
         position: relative;
         background-size:cover;
-        margin:0 auto;
-        width: 90%;
-        height: auto;
+        background-position: center;
+        margin: 0 auto;
+        height: 120px;
       }
     }
 
@@ -83,7 +83,17 @@
 
 .in-p{
   position: relative;
-  width:initial;
+  margin-left: 4em;
+  width:80%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+   label{
+     position: absolute;
+     left:-5em;
+     font:bold 13px/17px 'Roboto Condensed',;
+   }
+
   .error{
     position: absolute;
     right:3px;

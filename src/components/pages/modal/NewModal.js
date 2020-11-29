@@ -9,7 +9,7 @@ const NewModal = ({children, open, onClose}) => {
         <>
         <div className='modal'>
             <div onClick={onClose} className="modal-close-button ">&#10006;</div>
-            <div className="children">{children}</div>
+            {children}
         </div>
         </>,
         document.getElementById("portal")

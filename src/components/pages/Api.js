@@ -26,22 +26,19 @@ import {ModForm} from "./modal/ModForm";
 
     // ------------------- GET
 
-    const allUsers =  () => {
-        axios.get(`http://localhost:3001/users`)
-            .then(res => {
-                const allPersons = (res.data);
-                getAll(allPersons)
-                console.log(allPersons);
-            })
+    const allUsers = async () => {
+        const res = await axios.get(`http://localhost:3001/users`);
+
+        const allPersons = (res.data);
+        getAll(allPersons);
+        console.log(allPersons);
     }
 
     //  --------------------  DELETE
 
-    const deleteUser = (id) => {
-        axios.delete(`http://localhost:3001/users/${id}`)
-            .then(res => {
-                allUsers();
-            });
+    const deleteUser = async (id) => {
+        const res = await axios.delete(`http://localhost:3001/users/${id}`);
+        await allUsers();
     }
 
     // ---------------------------- POST
@@ -95,9 +92,6 @@ import {ModForm} from "./modal/ModForm";
 
     const handleSubmit = (event) => {
        event.preventDefault();
-        setfName("");
-        setPass("");
-        setUserAvatar("");
        validate(addUser);
        allUsers();
     }
@@ -109,29 +103,43 @@ import {ModForm} from "./modal/ModForm";
 
     const onChangeName = (e) => { setfName(e.target.value) }
     const onChangePass = (e) => { setPass(e.target.value) }
+    const onChangeAvatar = (e) => { setUserAvatar(e.target.value) }
+
+    // when we close modal
+    const modalClosed = () => {
+        setIsOpen(false);
+        setfName("");
+        setPass("");
+        setUserAvatar("");
+    }
 
 
 // DOM
 return(
         <div className="table-section">
             {/*--------------- Table -----------------------*/}
-            <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />
-            <button onClick={()=> {setOrOpen(true)}} className="add_btn">ADD</button>
+            { (all.length) ?
+                <>
+                    <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />,
+                    <button onClick={()=> {setOrOpen(true)}} className="add_btn">ADD</button>
+                </>
+                : <h3 className="errorMessage">Something went wrong, please try a little later</h3> }
 
             {/* -------------------------- MODAL =----------------------- @*/}
-            <NewModal open={isOpen} onClose={() => setIsOpen(false)}>
+            <NewModal open={isOpen} onClose={modalClosed}>
                 <div className="image"><img src={userAvatar} /></div>
-                <input placeholder={userID} disabled="disabled" />
-                <input placeholder="Image Url" value={userAvatar} onChange={(e) => setUserAvatar(e.target.value)} />
+                <div className="in-p">
+                      <label htmlFor="id">ID</label>
+                      <input name="id" placeholder={userID} disabled="disabled" />
+                </div>
                 <ModForm fName={fName} onChangeName={onChangeName} pass={pass} onChangePass={onChangePass}
-                         nameError={nameError} passError={passError} />
+                         nameError={nameError} passError={passError} userAvatar={userAvatar} onChangeAvatar={onChangeAvatar} />
                <Button submit={clickChangeSubmit} />
             </NewModal>
 
             <NewModal open={orOpen} onClose={() => setOrOpen(false)}>
-                    <input placeholder="Image Url" value={userAvatar} onChange={(e) => setUserAvatar(e.target.value)} />
                     <ModForm fName={fName} onChangeName={onChangeName} pass={pass} onChangePass={onChangePass}
-                        nameError={nameError} passError={passError} />
+                         nameError={nameError} passError={passError} userAvatar={userAvatar} onChangeAvatar={onChangeAvatar} />
                     <Button submit={handleSubmit} />
             </NewModal>
 
