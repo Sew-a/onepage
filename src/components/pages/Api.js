@@ -1,16 +1,23 @@
 import React, {useState, useEffect} from "react";
 import axios from "axios";
 import NewModal from "./modal/NewModal";
+import {Button} from "./modal/Button";
+import {Table} from "./modal/Table";
+import {ModForm} from "./modal/ModForm";
 
  const Api = () => {
     const [all, getAll] = useState([]);
+
     const [fName, setfName] = useState("");
     const [pass, setPass] = useState("");
-    const [getID, setGetID] = useState("");
-
-    const [showDataTarg, setShowDataTarg] = useState("");
+    const [userID, setUserID] = useState("");
+    const [userAvatar, setUserAvatar] = useState("");
+    //Modals
     const [isOpen, setIsOpen] = useState(false);
-
+    const [orOpen, setOrOpen] = useState(false);
+     // Errors
+     const [nameError, setNameError] = useState("");
+     const [passError, setPassError] = useState("");
 
     (useEffect(() => {
         allUsers();
@@ -23,22 +30,10 @@ import NewModal from "./modal/NewModal";
         axios.get(`http://localhost:3001/users`)
             .then(res => {
                 const allPersons = (res.data);
-                getAll(allPersons);
+                getAll(allPersons)
                 console.log(allPersons);
             })
     }
-
-    // -----------------------SHOW
-
-     const showUser = async (id) => {
-         await axios.get(`http://localhost:3001/users/${id}`)
-             .then(res => {
-                 const tor = res.data;
-                 // console.log(tor);
-                 setShowDataTarg(tor);
-             });
-         setIsOpen(true);
-     }
 
     //  --------------------  DELETE
 
@@ -46,81 +41,100 @@ import NewModal from "./modal/NewModal";
         axios.delete(`http://localhost:3001/users/${id}`)
             .then(res => {
                 allUsers();
-            })
+            });
     }
 
     // ---------------------------- POST
+
+     const sets = (Open) => {
+         setfName("");
+         setPass("");
+         setUserAvatar("");
+         Open(false);
+         allUsers();
+     }
 
 
     const addUser = async () => {
       await  axios.post(`http://localhost:3001/users/`, {
             name: fName,
             password: pass,
-            profession: "Developer",
+            img_url: userAvatar,
         });
-        setfName("");
-        setPass("");
-        allUsers();
-        setIsOpen(false);
+        sets(setOrOpen);
     }
 
     // -------------------------------- PUT
 
      const clickChangeUser = async () => {
-         await axios.put(`http://localhost:3001/users/${getID}`, {
-             name: fName.length ? fName : "Gaga",
-             password: pass.length ? pass : "45454545",
-             profession: "Developer",
-             id: getID,
+         await axios.put(`http://localhost:3001/users/${userID}`, {
+             name: fName,
+             password: pass,
+             id: userID,
+             img_url:userAvatar,
          });
-         setfName("");
-         setPass("");
-         allUsers();
-         setIsOpen(false);
+         sets(setIsOpen);
      }
 
-    const changeUser = (id) => {
+    const changeUser = (item) => {
         setIsOpen(true);
-        setGetID(id);
+        setUserID(item.id);
+        setUserAvatar(item.img_url);
+        setfName(item.name);
+        setPass(item.password);
     }
+
+    //Validation
+    const validate = (func) => {
+        fName.length === 0 ? setNameError("✖") : setNameError("");
+        pass.length === 0 ? setPassError("✖") : setPassError("");
+        if(fName.length >= 1 && pass.length >= 1) { func(); }
+    }
+
+    // Handlers
+
+    const handleSubmit = (event) => {
+       event.preventDefault();
+        setfName("");
+        setPass("");
+        setUserAvatar("");
+       validate(addUser);
+       allUsers();
+    }
+    const clickChangeSubmit = (event) => {
+       event.preventDefault();
+       validate(clickChangeUser);
+       allUsers();
+    }
+
+    const onChangeName = (e) => { setfName(e.target.value) }
+    const onChangePass = (e) => { setPass(e.target.value) }
 
 
 // DOM
 return(
         <div className="table-section">
-        <table>
-            <thead>
-            <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Pass</td>
-                <td>Change</td>
-                <td>Delete</td>
-            </tr>
-            </thead>
-            <tbody>
-                 {all.map(item => (
-                     <tr key={item.id}>
-                         <td onClick={() => showUser(item.id)}>{item.id}</td>
-                         <td>{item.name}</td>
-                         <td>{item.password}</td>
-                         <td className="add" onClick={(e) => changeUser(item.id)}>Change</td>
-                         <td className="delete" onClick={(e) => deleteUser(item.id, e)}>&#10006;</td>
-                     </tr>
-                 ))}
-            </tbody>
-        </table>
-            <button onClick={()=> {setIsOpen(true)}} className="add_btn">ADD</button>
-        {/*    MODAL  */}
+            {/*--------------- Table -----------------------*/}
+            <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />
+            <button onClick={()=> {setOrOpen(true)}} className="add_btn">ADD</button>
 
-            <NewModal open={isOpen} useName={showDataTarg} onClose={() => setIsOpen(false)}>
-                <input placeholder="Name" value={fName} onChange={(e) => setfName(e.target.value)} />
-                <input placeholder="Password" value={pass} onChange={(e) => setPass(e.target.value)} />
-                <div className="mod-buttons">
-                    <button onClick={addUser} >Create User</button>
-                    <button onClick={clickChangeUser} >Change User</button>
-                </div>
+            {/* -------------------------- MODAL =----------------------- @*/}
+            <NewModal open={isOpen} onClose={() => setIsOpen(false)}>
+                <div className="image"><img src={userAvatar} /></div>
+                <input placeholder={userID} disabled="disabled" />
+                <input placeholder="Image Url" value={userAvatar} onChange={(e) => setUserAvatar(e.target.value)} />
+                <ModForm fName={fName} onChangeName={onChangeName} pass={pass} onChangePass={onChangePass}
+                         nameError={nameError} passError={passError} />
+               <Button submit={clickChangeSubmit} />
             </NewModal>
+
+            <NewModal open={orOpen} onClose={() => setOrOpen(false)}>
+                    <input placeholder="Image Url" value={userAvatar} onChange={(e) => setUserAvatar(e.target.value)} />
+                    <ModForm fName={fName} onChangeName={onChangeName} pass={pass} onChangePass={onChangePass}
+                        nameError={nameError} passError={passError} />
+                    <Button submit={handleSubmit} />
+            </NewModal>
+
         </div>
   );
 };

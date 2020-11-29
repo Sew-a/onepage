@@ -6,6 +6,7 @@
   margin: 40px auto;
   max-width: 68em;
 
+
   button{
     cursor:pointer;
     border:none;
@@ -14,16 +15,22 @@
     outline:none;
   }
   .add_btn{
-    padding: .8em 2.5em;
+    padding: .8em 2.8em;
     margin-left:13px;
     border-radius: 8px;
-    background: #151b31;
+    background: #1c223b;
     color:#fff;
+    transition: .2s ease;
+    &:hover{
+      background: #151b31;
+    }
   }
 
   input{
     padding: 3px 14px;
-
+  }
+  input[type=text]:disabled {
+    background: #dddddd;
   }
 
   table{
@@ -38,6 +45,7 @@
     }
     tbody tr{
       background:#1c223b;
+      transition: all .15s ease;
       .delete {
         cursor: pointer;
         background: red;
@@ -79,15 +87,6 @@
     }
   }
 }
-
-.modal {
-  position: fixed;
-  top: 12px;
-  padding: 12px;
-  background-color: white;
-  border: 1px solid grey;
-}
-
 
 
 @media (max-width:768px){

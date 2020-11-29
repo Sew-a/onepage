@@ -12,7 +12,6 @@
   padding: 4rem;
   zIndex:100;
 
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,14 +29,26 @@
       padding: 6px 4px;
       border:none;
       border-bottom:1px solid #151b31;
-      width:80%;
+      width:100%;
       outline: none;
     }
+
+    .image{
+      width:120px;
+      height:160px;
+      img{
+        position: relative;
+        background-size:cover;
+        margin:0 auto;
+        width: 90%;
+        height: auto;
+      }
+    }
+
+
     .mod-buttons{
-      margin-top:30px ;
-      display: inline-block;
-      button {
-        display: inline;
+        margin-top:30px ;
+        display: block;
         font-size: 1.1rem;
         border: none;
         border-radius: 3px;
@@ -46,7 +57,10 @@
         background: #273349;
         color: #fff;
         cursor: pointer;
-      }
+        transition: .2s ease;
+         &:hover{
+           background: #1c223b;
+          }
     }
 
   .modal-close-button {
@@ -56,9 +70,25 @@
     font-size: 22px;
     font-weight:  bolder;
     line-height: 1;
-    color: #000;
+    color: #151b31;
     opacity: .3;
     cursor: pointer;
     border: none;
+    transition: .2s ease;
+    &:hover{
+      background: #f2f2f2;
+    }
+  }
+}
+
+.in-p{
+  position: relative;
+  width:initial;
+  .error{
+    position: absolute;
+    right:3px;
+    top:20px;
+    color:red;
+    font-size: 18px;
   }
 }
