@@ -32,18 +32,6 @@ h3.errorMessage{
       outline: none;
     }
 
-    .image{
-      position: relative;
-      width:120px;
-      height:120px;
-      img{
-        position: relative;
-        background-size:cover;
-        background-position: center;
-        margin: 0 auto;
-        height: 120px;
-      }
-    }
 
 
     .mod-buttons{
@@ -79,6 +67,23 @@ h3.errorMessage{
       background: #f2f2f2;
     }
   }
+}
+// ------------------------inner modal
+
+.inner_modal{
+  width:100%;
+
+  .image{
+    position: relative;
+    width:initial;
+    height:140px;
+    text-align: center;
+    img{
+      width:auto;
+      height:140px;
+    }
+  }
+
 }
 
 .in-p{
