@@ -3,9 +3,15 @@ import axios from "axios";
 import NewModal from "./modal/NewModal";
 import { Table } from "./modal/Table";
 import { ModForm } from "./modal/ModForm";
+import { Pagination } from "./modal/Pagination";
 
 const Api = () => {
   const [all, getAll] = useState([]);
+
+  // pagination dovs
+  const [postsPerPage] = useState(10);
+  const [allPages, setAllPages] = useState(null);
+  //pagin-end
 
   const [fName, setfName] = useState("");
   const [pass, setPass] = useState("");
@@ -18,25 +24,29 @@ const Api = () => {
   const [nameError, setNameError] = useState("");
   const [passError, setPassError] = useState("");
 
+  //url
+  const baseUrl2 = "http://localhost:3001/users/";
+
   useEffect(() => {
     allUsers();
   }, []);
 
   // ------------------- GET
 
-  const baseUrl = "http://localhost:3001/users/";
-
-  const allUsers = async () => {
-    const res = await axios.get(baseUrl);
-    const allPersons = res.data;
+  const allUsers = async (pageNumber) => {
+    const res = await axios.get(
+      `http://localhost:3001/users?page=${pageNumber}&limit=10`
+    );
+    const allPersons = res.data.users;
     getAll(allPersons);
-    console.log(allPersons);
+    // console.log(res.data);
+    setAllPages(res.data.count);
   };
 
   //  --------------------  DELETE
 
   const deleteUser = async (id) => {
-    await axios.delete(`${baseUrl}${id}`);
+    await axios.delete(`${baseUrl2}${id}`);
     await allUsers();
   };
 
@@ -51,7 +61,7 @@ const Api = () => {
   };
 
   const addUser = async () => {
-    await axios.post(baseUrl, {
+    await axios.post(baseUrl2, {
       name: fName,
       password: pass,
       img_url: userAvatar,
@@ -62,7 +72,7 @@ const Api = () => {
   // -------------------------------- PUT
 
   const clickChangeUser = async () => {
-    await axios.put(`${baseUrl}${userID}`, {
+    await axios.put(`${baseUrl2}${userID}`, {
       name: fName,
       password: pass,
       id: userID,
@@ -126,21 +136,20 @@ const Api = () => {
       {/*--------------- Table -----------------------*/}
       {all.length ? (
         <>
-          <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />,
-          <button
-            onClick={() => {
-              setOrOpen(true);
-            }}
-            className="add_btn"
-          >
+          <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />
+          <button onClick={() => setOrOpen(true)} className="add_btn">
             ADD
           </button>
         </>
       ) : (
-        <h3 className="errorMessage">
-          Something went wrong, please try a little later
-        </h3>
+        <h3 className="errorMessage">There are no users</h3>
       )}
+      {/* --------------------------Pagination -------------------------------*/}
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={allPages}
+        allUsers={allUsers}
+      />
 
       {/* -------------------------- MODAL =----------------------- @*/}
       <NewModal open={isOpen} onClose={modalClosed}>

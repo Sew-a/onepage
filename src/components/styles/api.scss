@@ -89,6 +89,23 @@
 }
 
 
+.pagination{
+  position: relative;
+  margin-top: 40px;
+  width:100%;
+  display: flex;
+  justify-content: center;
+
+
+  .page-link{
+    margin: 2px;
+    background: #fff;
+    padding: 4px 9px;
+    cursor: pointer;
+  }
+}
+
+
 @media (max-width:768px){
   .table-section{
     padding:20px;
@@ -101,3 +118,4 @@
     display:none;
   }
 }
+
