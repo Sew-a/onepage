@@ -6,6 +6,7 @@
   margin: 40px auto;
   max-width: 68em;
 
+
   button{
     cursor:pointer;
     border:none;
@@ -13,9 +14,23 @@
     color:#151b31;
     outline:none;
   }
+  .add_btn{
+    padding: .8em 2.8em;
+    margin-left:13px;
+    border-radius: 8px;
+    background: #1c223b;
+    color:#fff;
+    transition: .2s ease;
+    &:hover{
+      background: #151b31;
+    }
+  }
+
   input{
     padding: 3px 14px;
-
+  }
+  input[type=text]:disabled {
+    background: #dddddd;
   }
 
   table{
@@ -30,6 +45,7 @@
     }
     tbody tr{
       background:#1c223b;
+      transition: all .15s ease;
       .delete {
         cursor: pointer;
         background: red;
@@ -72,14 +88,22 @@
   }
 }
 
-.modal {
-  position: fixed;
-  top: 12px;
-  padding: 12px;
-  background-color: white;
-  border: 1px solid grey;
-}
 
+.pagination{
+  position: relative;
+  margin-top: 40px;
+  width:100%;
+  display: flex;
+  justify-content: center;
+
+
+  .page-link{
+    margin: 2px;
+    background: #fff;
+    padding: 4px 9px;
+    cursor: pointer;
+  }
+}
 
 
 @media (max-width:768px){
@@ -94,3 +118,4 @@
     display:none;
   }
 }
+

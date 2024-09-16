@@ -1,134 +1,188 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import NewModal from "./modal/NewModal";
+import { Table } from "./modal/Table";
+import { ModForm } from "./modal/ModForm";
+import { Pagination } from "./modal/Pagination";
 
-import Modal from "./modal/Modal"
-import useModal from "./modal/UseModal";
-import {Link} from "react-router-dom";
+const Api = () => {
+  const [all, getAll] = useState([]);
 
+  // pagination dovs
+  const [postsPerPage] = useState(10);
+  const [allPages, setAllPages] = useState(null);
+  //pagin-end
 
+  const [fName, setfName] = useState("");
+  const [pass, setPass] = useState("");
+  const [userID, setUserID] = useState("");
+  const [userAvatar, setUserAvatar] = useState("");
+  //Modals
+  const [isOpen, setIsOpen] = useState(false);
+  const [orOpen, setOrOpen] = useState(false);
+  // Errors
+  const [nameError, setNameError] = useState("");
+  const [passError, setPassError] = useState("");
 
- const Api = () => {
+  //url
+  const baseUrl2 = "http://localhost:3001/users/";
 
-    const [all, getAll] = useState([]);
+  useEffect(() => {
+    allUsers();
+  }, []);
 
-    const [fName, setfName] = useState("");
-    const [pass, setPass] = useState("");
-    // const [giveId, setGiveId] = useState("");
+  // ------------------- GET
 
-    const {isShowing, toggle} = useModal();
-    const [showDataTarg, setShowDataTarg] = useState("");
+  const allUsers = async (pageNumber) => {
+    const res = await axios.get(
+      `http://localhost:3001/users?page=${pageNumber}&limit=10`
+    );
+    const allPersons = res.data.users;
+    getAll(allPersons);
+    // console.log(res.data);
+    setAllPages(res.data.count);
+  };
 
+  //  --------------------  DELETE
 
-    (useEffect(() => {
-        allUsers();
-    },[] ));
+  const deleteUser = async (id) => {
+    await axios.delete(`${baseUrl2}${id}`);
+    await allUsers();
+  };
 
+  // ---------------------------- POST
 
+  const sets = (Open) => {
+    setfName("");
+    setPass("");
+    setUserAvatar("");
+    Open(false);
+    allUsers();
+  };
 
-    // ------------------- GET
+  const addUser = async () => {
+    await axios.post(baseUrl2, {
+      name: fName,
+      password: pass,
+      img_url: userAvatar,
+    });
+    sets(setOrOpen);
+  };
 
-    const allUsers =  () => {
-        axios.get(`http://localhost:3001/users`)
-            .then(res => {
-                const allPersons = (res.data);
-                getAll(allPersons);
-                console.log(allPersons);
-            })
+  // -------------------------------- PUT
+
+  const clickChangeUser = async () => {
+    await axios.put(`${baseUrl2}${userID}`, {
+      name: fName,
+      password: pass,
+      id: userID,
+      img_url: userAvatar,
+    });
+    sets(setIsOpen);
+  };
+
+  const changeUser = (item) => {
+    setIsOpen(true);
+    setUserID(item.id);
+    setUserAvatar(item.img_url);
+    setfName(item.name);
+    setPass(item.password);
+  };
+
+  //Validation
+  const validate = (func) => {
+    fName.length === 0 ? setNameError("✖") : setNameError("");
+    pass.length === 0 ? setPassError("✖") : setPassError("");
+    if (fName.length >= 1 && pass.length >= 1) {
+      func();
     }
+  };
 
-    // -----------------------SHOW
+  // Handlers
 
-     const showUser = async (id) => {
-         await axios.get(`http://localhost:3001/users/${id}`)
-             .then(res => {
-                 const tor = res.data;
-                 // console.log(tor);
-                 setShowDataTarg(tor);
-             });
-         {toggle()}
-     }
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    validate(addUser);
+    allUsers();
+  };
+  const clickChangeSubmit = (event) => {
+    event.preventDefault();
+    validate(clickChangeUser);
+    allUsers();
+  };
 
+  const onChangeName = (e) => {
+    setfName(e.target.value);
+  };
+  const onChangePass = (e) => {
+    setPass(e.target.value);
+  };
+  const onChangeAvatar = (e) => {
+    setUserAvatar(e.target.value);
+  };
 
-    //  --------------------  DELETE
+  // when we close modal
+  const modalClosed = () => {
+    setIsOpen(false);
+    setUserID("");
+    setfName("");
+    setPass("");
+    setUserAvatar("");
+  };
 
-    const deleteUser = (id) => {
-        axios.delete(`http://localhost:3001/users/${id}`)
-            .then(res => {
-                allUsers();
-            })
-    }
+  // DOM
+  return (
+    <div className="table-section">
+      {/*--------------- Table -----------------------*/}
+      {all.length ? (
+        <>
+          <Table all={all} changeUser={changeUser} deleteUser={deleteUser} />
+          <button onClick={() => setOrOpen(true)} className="add_btn">
+            ADD
+          </button>
+        </>
+      ) : (
+        <h3 className="errorMessage">There are no users</h3>
+      )}
+      {/* --------------------------Pagination -------------------------------*/}
+      <Pagination
+        postsPerPage={postsPerPage}
+        totalPosts={allPages}
+        allUsers={allUsers}
+      />
 
-    // ---------------------------- POST
+      {/* -------------------------- MODAL =----------------------- @*/}
+      <NewModal open={isOpen} onClose={modalClosed}>
+        <ModForm
+          fName={fName}
+          onChangeName={onChangeName}
+          pass={pass}
+          onChangePass={onChangePass}
+          nameError={nameError}
+          passError={passError}
+          userAvatar={userAvatar}
+          onChangeAvatar={onChangeAvatar}
+          submit={clickChangeSubmit}
+          userID={userID}
+        />
+      </NewModal>
 
-     const onChangeValue = event => setfName(event.target.value);
-     const onChangePass = event => setPass(event.target.value);
-     // const onChangeID = event => setGiveId(event.target.value);
-
-
-    const addUser = async () => {
-      await  axios.post(`http://localhost:3001/users/`, {
-            name: fName,
-            password: pass,
-            profession: "Developer",
-        });
-        setfName("");
-        setPass("");
-        allUsers();
-    }
-
-    // -------------------------------- PUT
-
-    const changeUser = async (id ,e) => {
-        await axios.put(`http://localhost:3001/users/${id}`, {
-            name: fName.length > 3 ? fName : "Gaga",
-            password: pass.length > 3 ? pass : "45454545",
-            profession: "Developer",
-            id,
-       });
-        allUsers();
-    }
-
-
-
-// DOM
-return(
-        <div className="table-section">
-            <input placeholder="Name" value={fName} onChange={onChangeValue} />
-            <input placeholder="Password" value={pass} onChange={onChangePass} />
-            <button onClick={addUser} >Create User</button>
-        <table>
-            <thead>
-            <tr>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Pass</td>
-                <td>Change</td>
-                <td>Delete</td>
-            </tr>
-            </thead>
-            <tbody>
-                 {all.map(item => (
-                     <tr key={item.id}>
-                         <td onClick={() => showUser(item.id)}>{item.id}</td>
-                         <td>{item.name}</td>
-                         <td>{item.password}</td>
-                         <td className="add" onClick={(e) => changeUser(item.id, e)}>Change</td>
-                         <td className="delete" onClick={(e) => deleteUser(item.id, e)}>&#10006;</td>
-                     </tr>
-                 ))}
-            </tbody>
-        </table>
-        {/*    MODAL  */}
-
-            <Modal isShowing={isShowing}  hide={toggle}  useName={showDataTarg} />
-
-        </div>
+      <NewModal open={orOpen} onClose={() => setOrOpen(false)}>
+        <ModForm
+          fName={fName}
+          onChangeName={onChangeName}
+          pass={pass}
+          onChangePass={onChangePass}
+          nameError={nameError}
+          passError={passError}
+          userAvatar={userAvatar}
+          onChangeAvatar={onChangeAvatar}
+          submit={handleSubmit}
+          userID={userID}
+        />
+      </NewModal>
+    </div>
   );
 };
 
-
 export default Api;
-
-
-
-
